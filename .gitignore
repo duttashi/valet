@@ -1,0 +1,8 @@
+*.pyc
+*.*.pyc
+*.ini
+__*__.*.pyc
+*.*.bak
+*-*-*.ini
+.spyproject
+__*__.py
