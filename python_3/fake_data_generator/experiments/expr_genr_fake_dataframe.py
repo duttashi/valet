@@ -20,7 +20,7 @@ IMPORTANT FACTORS FOR CTR
 """
 import random
 import pandas as pd
-import numpy as np
+
 
 # declare global variables
 adv_name = ['soft toys', 'kitchenware', 'electronics',
@@ -29,6 +29,10 @@ adv_loc = ['cheras', 'universiti', 'sungai besi',
            'ampang', 'kl sentral']
 adv_prod = ['baby product', 'kitchenware', 'electronics',
             'mobile phones', 'laptops']
+adv_size = [1, 2, 3, 4, 10]
+adv_layout = ['static', 'dynamic']  # advertisment layout type on website
+
+# adv_date, start_time, end_time = []
 num = 10
 
 
@@ -90,6 +94,17 @@ def rand_clic_impr(num):
         click_lst.append(random.randint(0, 100))
     return {'rand_impr_lst': rand_impr_lst, 'rand_click_lst': click_lst}
 
+# define function to generate random product price and discount
+def rand_prod_price_discount(num):
+    prod_price_lst = []  # advertised product price
+    prod_discnt_lst = []  # advertised product discount
+    
+    for i in range(num):
+        prod_price_lst.append(random.randint(10, 100))
+        prod_discnt_lst.append(random.randint(10, 100))
+    
+    return {'prod_price_lst': prod_price_lst, 'prod_discnt_lst': prod_discnt_lst}
+
 # Define function that accepts a start date and end date as parameters.
 # Ad returns a random series of dates between the given start and end date
 # def rand_shuf_date(start_date, end_date, num):
@@ -105,6 +120,9 @@ def main():
     # get the impressions and click data
     impression = rand_clic_impr(num)
     clicks = rand_clic_impr(num)
+    product_price = rand_prod_price_discount(num)
+    product_discount = rand_prod_price_discount(num)
+    # print("pp: ", product_price)
     # start = rand_shuf_date('2010-10-1', '2010-10-30', 10)
     # end = rand_shuf_date('2010-10-1', '2010-10-30', 10)
     # add all lists to a dictionary
@@ -113,11 +131,12 @@ def main():
     #             "ad_prod": rand_shuf_prod(adv_prod, num),
     #             "impressions": impression['rand_impr_lst'],
     #             "clicks": clicks['rand_click_lst']}
-    
     lst_dict = {"ad_loc": rand_shuf_loc(adv_loc, num),
                 "product": rand_shuf_prod(adv_prod, num),
                 "impressions": impression['rand_impr_lst'],
-                "clicks": clicks['rand_click_lst']}
+                "clicks": clicks['rand_click_lst'],
+                "prod_price": product_price['prod_price_lst'],
+                "prod_discnt": product_discount['prod_discnt_lst']}
     fake_data = pd.DataFrame.from_dict(lst_dict, orient="index")
     # fake_data = pd.DataFrame(fake_data)
     # print("Fake dataset\n", fake_data.transpose())
