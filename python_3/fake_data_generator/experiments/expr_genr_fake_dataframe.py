@@ -20,6 +20,8 @@ IMPORTANT FACTORS FOR CTR
 """
 import random
 import pandas as pd
+import time
+from datetime import datetime
 
 
 # declare global variables
@@ -37,47 +39,48 @@ num = 10
 
 
 # define function to generate random geographic coordinates
-def rand_geog_cord(num):
-    # Generate a set of all points within 200 of the origin,
-    # to be used as offsets later
-    # There's probably a more efficient way to do this.
-    radius = 200
-    rangeX = (0, 2500)
-    rangeY = (0, 2500)
-    # qty = 100  # or however many points you want
-    deltas = set()
-    for x in range(-radius, radius+1):
-        for y in range(-radius, radius+1):
-            if x*x + y*y <= radius*radius:
-                deltas.add((x, y))
-    randPoints = []
-    excluded = set()
-    i = 0
-    while i < num:
-        x = random.randrange(*rangeX)
-        y = random.randrange(*rangeY)
-        if (x, y) in excluded:
-            continue
-        randPoints.append((x, y))
-        i += 1
-        excluded.update((x+dx, y+dy) for (dx, dy) in deltas)
-        # print (randPoints)
-    # randPoints.apply(lambda x: x.fillna(0)
-    #                       if x.dtype.kind in 'biufc'
-    #                       # where 'biufc' means boolean, integer,
-    #                       # unicode, float & complex data types
-    #                       else x.fillna(excluded.update((x+dx, y+dy) for (dx, dy) in deltas)
-    #                                     )
-    #                       )
-    return randPoints
+# def rand_geog_cord(num):
+#     # Generate a set of all points within 200 of the origin,
+#     # to be used as offsets later
+#     # There's probably a more efficient way to do this.
+#     radius = 200
+#     rangeX = (0, 2500)
+#     rangeY = (0, 2500)
+#     # qty = 100  # or however many points you want
+#     deltas = set()
+#     for x in range(-radius, radius+1):
+#         for y in range(-radius, radius+1):
+#             if x*x + y*y <= radius*radius:
+#                 deltas.add((x, y))
+#     randPoints = []
+#     excluded = set()
+#     i = 0
+#     while i < num:
+#         x = random.randrange(*rangeX)
+#         y = random.randrange(*rangeY)
+#         if (x, y) in excluded:
+#             continue
+#         randPoints.append((x, y))
+#         i += 1
+#         excluded.update((x+dx, y+dy) for (dx, dy) in deltas)
+#         # print (randPoints)
+#     # randPoints.apply(lambda x: x.fillna(0)
+#     #                       if x.dtype.kind in 'biufc'
+#     #                       # where 'biufc' means boolean, integer,
+#     #                       # unicode, float & complex data types
+#     #                       else x.fillna(excluded.update((x+dx, y+dy) for (dx, dy) in deltas)
+#     #                                     )
+#     #                       )
+#     return randPoints
 
 # define function to generate random advert locations
 def rand_shuf_loc(str_lst, num):
     lst = adv_loc
     # using list comprehension
     rand_shuf_str = [item for item in lst for i in range(num)]
-    random.shuffle(rand_shuf_str)
+    # x = random.shuffle(rand_shuf_str)
     return(rand_shuf_str)
+    # return(x)
 
 # define function to generate random advert names
 def rand_shuf_prod(loc_list, num):
@@ -105,6 +108,36 @@ def rand_prod_price_discount(num):
     
     return {'prod_price_lst': prod_price_lst, 'prod_discnt_lst': prod_discnt_lst}
 
+def rand_prod_click_timestamp(stime, etime, num):
+    prod_clik_tmstmp = []
+    # start = "2020-10-01"
+    # end = "2020-10-30"
+    frmt = '%d-%m-%Y %H:%M:%S'
+    # x = 50
+    
+
+    for i in range(num):
+        # stime = time.mktime(time.strptime(stime, frmt))
+        # etime = time.mktime(time.strptime(etime, frmt))
+        # td = etime - stime
+        # stime = time.mktime(time.strptime(stime, frmt))
+        # etime = time.mktime(time.strptime(etime, frmt))
+
+        # ptime = stime + random.random() * (etime - stime)
+        # dt = datetime.fromtimestamp(time.mktime(time.localtime(ptime)))
+        rtime = int(random.random()*86400)
+    
+        hours   = int(rtime/3600)
+        minutes = int((rtime - hours*3600)/60)
+        seconds = rtime - hours*3600 - minutes*60
+    
+        time_string = '%02d:%02d:%02d' % (hours, minutes, seconds)
+        prod_clik_tmstmp.append(time_string)
+        time_stmp = [item for item in prod_clik_tmstmp for i in range(num)]
+        
+    # return {'prod_clik_tmstmp_lst':prod_clik_tmstmp}
+    return {'prod_clik_tmstmp_lst':time_stmp}
+
 # Define function that accepts a start date and end date as parameters.
 # Ad returns a random series of dates between the given start and end date
 # def rand_shuf_date(start_date, end_date, num):
@@ -122,6 +155,8 @@ def main():
     clicks = rand_clic_impr(num)
     product_price = rand_prod_price_discount(num)
     product_discount = rand_prod_price_discount(num)
+    prod_clik_tmstmp = rand_prod_click_timestamp("20-01-2018 13:30:00",
+                                                 "23-01-2018 04:50:34",num)
     # print("pp: ", product_price)
     # start = rand_shuf_date('2010-10-1', '2010-10-30', 10)
     # end = rand_shuf_date('2010-10-1', '2010-10-30', 10)
@@ -132,11 +167,12 @@ def main():
     #             "impressions": impression['rand_impr_lst'],
     #             "clicks": clicks['rand_click_lst']}
     lst_dict = {"ad_loc": rand_shuf_loc(adv_loc, num),
-                "product": rand_shuf_prod(adv_prod, num),
-                "impressions": impression['rand_impr_lst'],
-                "clicks": clicks['rand_click_lst'],
+                "prod": rand_shuf_prod(adv_prod, num),
+                "imprsn": impression['rand_impr_lst'],
+                "cliks": clicks['rand_click_lst'],
                 "prod_price": product_price['prod_price_lst'],
-                "prod_discnt": product_discount['prod_discnt_lst']}
+                "prod_discnt": product_discount['prod_discnt_lst'],
+                "prod_clik_stmp": prod_clik_tmstmp['prod_clik_tmstmp_lst']}
     fake_data = pd.DataFrame.from_dict(lst_dict, orient="index")
     # fake_data = pd.DataFrame(fake_data)
     # print("Fake dataset\n", fake_data.transpose())
@@ -156,6 +192,7 @@ def main():
                                         )
                           )
     print(res.transpose())
+    res.to_csv("fake_data.csv", sep=",")
 
 # invoke the main function
 
