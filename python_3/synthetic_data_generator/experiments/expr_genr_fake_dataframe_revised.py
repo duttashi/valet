@@ -4,11 +4,12 @@ Created on Mon Nov  2 08:22:32 2020
 
 @author: Ashish
 """
-
+import warnings
+warnings.filterwarnings('ignore')
 import random
 import pandas as pd
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 # declare global variables
@@ -20,6 +21,7 @@ adv_size = [1, 2, 3, 4, 10]
 # adv_layout = ['static', 'dynamic']
 
 rows_num = 10 # the given dimension
+DATE_FORMAT = ['%Y-%m-%d','%d %B %Y']
 
 # function: given a list of locations, assign locations randomly 
 def rand_shuf_loc(loc_lst,rows_num):
@@ -78,6 +80,8 @@ def randomTime(adv_prod, rows_num):
             time_list.append(time_string)
     return {'time_list':time_list}
 
+
+
 def main():
     print('generating data...')
     impression = rand_clic_impr(adv_prod,rows_num)
@@ -85,7 +89,7 @@ def main():
     product_price = rand_prod_price_discount(adv_prod,rows_num)
     product_discount = rand_prod_price_discount(adv_prod,rows_num)
     prod_clik_tmstmp = randomTime(adv_prod,rows_num)
-    
+    # create a dictionary of the lists above
     lst_dict = {"ad_loc": rand_shuf_loc(adv_loc,rows_num),
                 "prod": rand_shuf_prod(adv_prod,rows_num),
                 "adv_size": rand_shuf_adsize(adv_size,rows_num),
@@ -98,7 +102,7 @@ def main():
     fake_data = pd.DataFrame.from_dict(lst_dict, orient="index")
     result = fake_data.transpose() 
     print(result)
-    result.to_csv("fake_data.csv", sep=",")
+    result.to_csv("../../../data/fake_data.csv", sep=",")
 
 # invoke the main function
 
