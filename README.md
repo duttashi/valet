@@ -16,7 +16,7 @@ The core repository `valet` consist of two sub-folders namely `python-3` and `R`
 ├───python_3
 │   │
 │   ├───ensemble
-│   ├───fake_data_generator
+│   ├───synthetic_data_generator
 │       ├───data
 │       ├───digital_advert_dataset
 │       ├───experiments
