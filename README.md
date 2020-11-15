@@ -21,8 +21,9 @@ The core repository `valet` consist of two sub-folders namely `python-3` and `R`
 │       ├───digital_advert_dataset
 │       ├───experiments
 │       └───solutions
-└───R```
+└───R
 
+```
 
 #### Contributing
 
