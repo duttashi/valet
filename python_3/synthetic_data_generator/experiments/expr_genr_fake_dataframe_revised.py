@@ -32,10 +32,22 @@ def rand_shuf_prod(prod_list,rows_num):
 def rand_prod_price_discount(adv_prod, rows_num):
     prod_price_lst = []  # advertised product price
     prod_discnt_lst = []  # advertised product discount
+    
+    # generate random data and populate the lists 
     for item in adv_prod:
         for i in range(rows_num):
             prod_price_lst.append(random.randint(10, 100))
             prod_discnt_lst.append(random.randint(10, 100))
+    
+    # check the random data in product discount list. Ensure its always less than the product price
+    # for i in prod_discnt_lst:
+    #     temp = random.randint(10, 100)
+    #     if(i<=prod_price_lst[i]):
+    #         var = random.randint(i, 100)
+    #         # print(var)
+    #         prod_discnt_lst.append(var)
+    #     else:
+    #         prod_discnt_lst.append(random.randint(10, 100))
     return {'prod_price_lst': prod_price_lst,
             'prod_discnt_lst': prod_discnt_lst}
 
@@ -110,7 +122,7 @@ def main():
     fake_data = pd.DataFrame.from_dict(lst_dict, orient="index")
     result = fake_data.transpose()
     print(result)
-    result.to_csv("../../../data/fake_data.csv", sep=",")
+    result.to_csv("data/fake_data.csv", sep=",")
 
 # invoke the main function
 
