@@ -9,3 +9,4 @@ __*__.py
 *.csv
 .Rproj.user
 .Rhistory
+/data
