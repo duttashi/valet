@@ -1,36 +1,43 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Feb 21 09:17:09 2021
-Last modified on Feb 22 21:00
+Last modified on Feb 24 21:00
 Objective: generate travel booking data
 @author: Ashish
 
 """
-import random, string, re
+import random, string, re, os
 import numpy as np
+import pandas as pd
 from datetime import timedelta, date
 
 # declare some global variables
-domains = [ "hotmail.com", "gmail.com", "aol.com", 
+DOMAIN = [ "hotmail.com", "gmail.com", "aol.com", 
            "mail.com" , "mail.kz", "yahoo.com"]
-dest = ["KUL","IND","AUS","CHN","USA","UK"]
-orig = ["KUL","IND","AUS","CHN","USA","UK"]
-letters = string.ascii_lowercase[:12]
+DEST = ["KUL","IND","AUS","CHN","USA","UK"]
+ORIG = ["KUL","IND","AUS","CHN","USA","UK"]
+LETTER = string.ascii_lowercase[:12]
 ROW_COUNT = 10 # denotes number of rows 
-RANGE_MIN = 1
-RANGE_MAX = 11
+MIN_RANGE = 0
+MAX_RANGE = 9
 
-def get_random_domain(domains):
-    return random.choice(domains)
+# clear the interpreter console screen
+def clear():
+    # got this solution from SO: https://stackoverflow.com/questions/517970/how-to-clear-the-interpreter-console
+    print("\033[H\033[J")
+    
 
-def get_random_name(letters, length):
-    return ''.join(random.choice(letters) for i in range(length))
+def get_random_domain(DOMAIN):
+    return random.choice(DOMAIN)
 
-def generate_random_emails(nb, length):
-    return [get_random_name(letters, length) + '@' + get_random_domain(domains) for i in range(nb)]
+def get_random_name(letters, MAX_RANGE):
+    return ''.join(random.choice(letters) for i in range(MAX_RANGE))
 
-def get_random_destination(dest):
-    return random.choice(dest)
+def generate_random_emails(ROW_COUNT, MAX_RANGE):
+    return [get_random_name(LETTER, MAX_RANGE) + '@' + get_random_domain(DOMAIN) for i in range(ROW_COUNT)]
+
+def get_random_destination(DEST):
+    return random.choice(DEST)
 
 # generate travel booking dates
 def get_booking_dates(date1, date2):
@@ -68,24 +75,44 @@ def get_airport_dest():
 
 def count_passenger_adult():
     # if (RANGE_MAX <= ROW_COUNT):
-    return random.sample(range(RANGE_MIN ,RANGE_MAX), ROW_COUNT)
+    # result = list(range(RANGE_MIN, RANGE_MAX))
+    # print("\n in count passenger adult function: ", len(result))
+    
+    # return random.randint(RANGE_MIN, RANGE_MAX) for _ in range(ROW_COUNT)
+    # return random.sample(result, ROW_COUNT)
+    # return random.sample(range(RANGE_MIN ,RANGE_MAX), ROW_COUNT)
     # else:
     #     # print("### ERROR, ENSURE COUNT OF ROWS IS GREATER THAN MAX RANGE")
     #     return random.sample(range(RANGE_MIN ,RANGE_MAX), ROW_COUNT)
+    # elem = random.shuffle(list(random.shuffle(RANGE_MIN, RANGE_MAX)))
+    # print(elem)
+    
+    
+    return [random.randint(MIN_RANGE, MAX_RANGE) for _ in range(ROW_COUNT)]
 
 def count_passenger_infant():
     
-    return random.sample(range(RANGE_MIN ,RANGE_MAX), ROW_COUNT)
+    return [random.randint(MIN_RANGE, MAX_RANGE) for _ in range(ROW_COUNT)]
+    
+    # result = list(range(RANGE_MIN, RANGE_MAX))
+    # return random.shuffle(result)
+    
+    # return random.sample(range(RANGE_MIN ,RANGE_MAX), ROW_COUNT)
     # return random.sample(range(1,20), ROW_COUNT)
     
-def passenger_count():
+# def passenger_count():
     
-    return random.sample(range(RANGE_MIN ,RANGE_MAX), ROW_COUNT)
-    # return a random count of passengers in a given range
-    # return random.sample(range(1,20), ROW_COUNT)
+#     return random.sample(range(RANGE_MIN ,RANGE_MAX), ROW_COUNT)
+#     # return a random count of passengers in a given range
+#     # return random.sample(range(1,20), ROW_COUNT)
 
 
 def main():
+    
+    # clear the console
+    clear()
+    
+    # declare variables
     start_dt = date(2015, 12, 1)
     end_dt = date(2015, 12, 10)
     travel_date = date(2015, 12, 19)
@@ -93,9 +120,13 @@ def main():
     # count_of_rows refers to the number of email address required
     # print(generate_random_emails(10, 7))
     # print(get_random_destination(dest))
-    email_lst = generate_random_emails(ROW_COUNT,7)
-    lst_orig = get_airport_orig()
-    lst_dest = get_airport_dest()
+    email_lst = generate_random_emails(ROW_COUNT,MAX_RANGE)
+    print("Row count: ", ROW_COUNT, "max range: ", MAX_RANGE)
+    print("email list len: ", len(email_lst))
+    lst_airprt_orig = get_airport_orig()
+    print("airport orig list len: ", len(lst_airprt_orig))
+    lst_airprt_dest = get_airport_dest()
+    print("airport dest list len: ", len(lst_airprt_dest))
     
     # print(lst_orig)
     # print('booking date')
@@ -107,34 +138,43 @@ def main():
     #     print(dt)
     
     booking_dt = get_booking_dates(start_dt, end_dt)
+    print("book date list len: ", len(booking_dt))
     travel_dt = get_travel_dates(end_dt, travel_date)
+    print("travel date list len: ", len(travel_dt))
     # for dt in travel_dt:
     #     print(dt)
     # print(passenger_count())
     # lst_guest = passenger_count()
     lst_adult = count_passenger_adult()
+    print("adult passngr count list len: ", len(lst_adult))
     lst_child = count_passenger_infant()
-    
+    print("child passngr count list len: ", len(lst_child))
+    print("Max range:", MAX_RANGE)
     # add all lists into a dataframe
-    import pandas as pd
-    df = pd.DataFrame({"custmr_email": email_lst,
+    # Note: using from_dict(), orient='index').T arranges columns with unequal length together
+    df = pd.DataFrame.from_dict({"custmr_email": email_lst,
                        "booking_date": booking_dt,
                        "travel_date": travel_dt,
-                       "orig": lst_orig,
-                       "dest": lst_dest,
+                       "orig": lst_airprt_orig,
+                       "dest": lst_airprt_dest,
                        "guest_adult": lst_adult,
                        "guest_child": lst_child
-                       }
-                      )
+                       }, orient='index').T
+    # df.explode('orig').reset_index(drop=True)
+    # df.explode('dest').reset_index(drop=True)
+
     # print(df)
+    print("orig dataframe shape: ",df.shape)
+    # print()
     # repeat the rows in dataframe n times
-    # df_expanded = df.loc[np.repeat(df.index.values,df.guest_num)]
+    df_expanded = df.loc[np.repeat(df.index.values,ROW_COUNT)]
     # print(df_expanded)
-    # num_of_rows = 3
-    df_expanded = pd.concat([df]*ROW_COUNT, ignore_index=True)
+    # # num_of_rows = 3
+    # df_expanded = pd.concat([df]*ROW_COUNT, ignore_index=True)
     # Now randomly shuffle the rows
     # reference: https://stackoverflow.com/questions/29576430/shuffle-dataframe-rows
     df_expanded = df_expanded.sample(frac=1).reset_index(drop=True)
+    print("Expanded dataframe shape: ", df_expanded.shape)
     print(df_expanded)
         
 if __name__ == "__main__":
