@@ -101,11 +101,12 @@ def main():
     # repeat the rows in dataframe n times
     df_expanded = df.loc[np.repeat(df.index.values,ROW_COUNT)]
     df_expanded = df_expanded.sample(frac=1).reset_index(drop=True)
+    print("### Data Generated ###\n")
     print("Expanded dataframe shape: ", df_expanded.shape)
-    print(df_expanded)
-    # write dataframe to disc
-    df_expanded.to_csv("travel_bookings.csv", sep=',', index=False)
-        
+    
+    # write generated data to disc
+    df_expanded.to_csv("../data/travel_booking.csv", sep=',', index=False)
+    
 if __name__ == "__main__":
     main()
 
