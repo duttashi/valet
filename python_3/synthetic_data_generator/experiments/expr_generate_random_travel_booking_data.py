@@ -16,6 +16,8 @@ DOMAIN = [ "hotmail.com", "gmail.com", "aol.com",
            "mail.com" , "mail.kz", "yahoo.com"]
 DEST = ["KUL","IND","AUS","CHN","USA","UK"]
 ORIG = ["KUL","IND","AUS","CHN","USA","UK"]
+TRIPTYPE = ["OneWay","RoundTrip","CircleTrip"]
+
 LETTER = string.ascii_lowercase[:12]
 ROW_COUNT = 10 # denotes number of rows 
 MIN_RANGE = 0
@@ -36,10 +38,7 @@ def get_random_name(letters, MAX_RANGE):
 def generate_random_emails(ROW_COUNT, MAX_RANGE):
     return [get_random_name(LETTER, MAX_RANGE) + '@' + get_random_domain(DOMAIN) for i in range(ROW_COUNT)]
 
-def get_random_destination(DEST):
-    return random.choice(DEST)
-
-# generate travel booking dates
+# generate booking dates
 def get_booking_dates(date1, date2):
     list_of_dates = []
     for n in range(int ((date2 - date1).days)+1):
@@ -47,7 +46,6 @@ def get_booking_dates(date1, date2):
     return list_of_dates
 
 # generate travel date
-
 def get_travel_dates(date1, date2):
     list_of_dates = []
     for n in range(int ((date2 - date1).days)+1):
@@ -56,22 +54,20 @@ def get_travel_dates(date1, date2):
 
 # generate random origin and destination locations
 def get_airport_orig():
-    a = 'KULAMRJPNINDRUSPENKULNPLSGRUSA'
-    # lst = [str[i:i+3] for i in range(0, len(a), 3)]
-    lst_orig = re.findall(".{3}", a)
-    # print(lst)
-    # improve this function by generating 3 character words N number of times
-    # lst_orig = ['KUL','AMR','BGLR','NDL','PEN','JPN','IND','NPL','AUS','UK']
-    return lst_orig
-    # return random.sample(lst_orig,1)
+    
+    # shuffle the list
+    random.shuffle(ORIG)
+    return ORIG
 
 def get_airport_dest():
-    # Objective: split the given string into 3 character words and return
-    a = 'USAKULAMRJPNINDRUSPENKULNPLSGR'
-    # lst_dest = ['UK','KUL','AMR','BGLR','NDL','PEN','JPN','IND','NPL','AUS']
-    lst_dest = re.findall(".{3}", a)
-    return lst_dest
-    # return random.sample(lst_dest,1)
+    # shuffle the list
+    random.shuffle(DEST)
+    return DEST
+
+def get_random_triptype():
+    # shuffle the list
+    random.shuffle(TRIPTYPE)
+    return TRIPTYPE
 
 def count_passenger_adult():
     # if (RANGE_MAX <= ROW_COUNT):
@@ -150,6 +146,8 @@ def main():
     lst_child = count_passenger_infant()
     print("child passngr count list len: ", len(lst_child))
     print("Max range:", MAX_RANGE)
+    lst_triptype = get_random_triptype()
+    print("Trip type: ",lst_triptype)
     # add all lists into a dataframe
     # Note: using from_dict(), orient='index').T arranges columns with unequal length together
     df = pd.DataFrame.from_dict({"custmr_email": email_lst,
@@ -158,7 +156,8 @@ def main():
                        "orig": lst_airprt_orig,
                        "dest": lst_airprt_dest,
                        "guest_adult": lst_adult,
-                       "guest_child": lst_child
+                       "guest_child": lst_child,
+                       "trip_type":lst_triptype,
                        }, orient='index').T
     # df.explode('orig').reset_index(drop=True)
     # df.explode('dest').reset_index(drop=True)
@@ -176,6 +175,8 @@ def main():
     df_expanded = df_expanded.sample(frac=1).reset_index(drop=True)
     print("Expanded dataframe shape: ", df_expanded.shape)
     print(df_expanded)
+    # write generated data to disc
+    df_expanded.to_csv("../data/booking_data.csv", sep=',', index=False)
         
 if __name__ == "__main__":
     main()
