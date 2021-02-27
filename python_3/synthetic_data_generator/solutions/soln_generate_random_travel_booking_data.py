@@ -23,9 +23,10 @@ DOMAIN = ["hotmail.com", "gmail.com", "aol.com",
 DEST = ["KUL", "IND", "AUS", "CHN", "USA", "UK"]
 ORIG = ["KUL", "IND", "AUS", "CHN", "USA", "UK"]
 TRIPTYPE = ["OneWay","RoundTrip","CircleTrip"]
-
+FLIGHT_DAY = ['Mon','Tue','Wed','Thur','Fri','Sat','Sun']
+BUY_INSURANCE = ['yes','no']
 LETTER = string.ascii_lowercase[:12]
-ROW_COUNT = 100
+ROW_COUNT = 300
 MIN_RANGE = 0
 MAX_RANGE = 9
 
@@ -79,6 +80,14 @@ def count_passenger_adult():
 def count_passenger_infant():
     return [random.randint(MIN_RANGE, MAX_RANGE) for _ in range(ROW_COUNT)]
 
+def get_random_flightday():
+    random.shuffle(FLIGHT_DAY)
+    return FLIGHT_DAY
+
+def get_random_insurance():
+    random.shuffle(BUY_INSURANCE)
+    return BUY_INSURANCE
+
 def main():
     # clear the console
     clear()
@@ -92,17 +101,20 @@ def main():
     trip = get_random_triptype()
     booking_dt = get_booking_dates(start_dt, end_dt)
     travel_dt = get_travel_dates(end_dt, travel_date)
-    lst_adult = count_passenger_adult()
-    lst_child = count_passenger_infant()
-    
+    count_adult = count_passenger_adult()
+    count_child = count_passenger_infant()
+    insurance = get_random_insurance()
+    flightday = get_random_flightday()
     df = pd.DataFrame.from_dict({"email": email_lst,
                        "booking_date": booking_dt,
                        "travel_date": travel_dt,
                        "orig": airprt_orig,
                        "dest": airprt_dest,
-                       "guest_adult": lst_adult,
-                       "guest_child": lst_child,
-                       "trip type":trip
+                       "guest_adult": count_adult,
+                       "guest_child": count_child,
+                       "trip_type":trip,
+                       "flight_day": flightday,
+                       "insurance": insurance
                        }, orient='index').T
     # repeat the rows in dataframe n times
     df_expanded = df.loc[np.repeat(df.index.values,ROW_COUNT)]
@@ -116,6 +128,7 @@ def main():
     # df_new = df_new[(df_new.orig!="") & (df_new.dest!="")]
     df_clean = df_clean[df_clean.orig.notnull()]
     df_clean = df_clean[df_clean.dest.notnull()]
+    df_clean = df_clean[df_clean.trip_type.notnull()]
     
     print("Revised dataframe shape: ", df_clean.shape)
     # write generated data to disc
