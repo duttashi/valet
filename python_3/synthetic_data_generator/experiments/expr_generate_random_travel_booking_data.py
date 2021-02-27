@@ -17,6 +17,8 @@ DOMAIN = [ "hotmail.com", "gmail.com", "aol.com",
 DEST = ["KUL","IND","AUS","CHN","USA","UK"]
 ORIG = ["KUL","IND","AUS","CHN","USA","UK"]
 TRIPTYPE = ["OneWay","RoundTrip","CircleTrip"]
+FLIGHT_DAY = ['Mon','Tue','Wed','Thur','Fri','Sat','Sun']
+BUY_INSURANCE = ['yes','no']
 
 LETTER = string.ascii_lowercase[:12]
 ROW_COUNT = 10 # denotes number of rows 
@@ -28,7 +30,6 @@ def clear():
     # got this solution from SO: https://stackoverflow.com/questions/517970/how-to-clear-the-interpreter-console
     print("\033[H\033[J")
     
-
 def get_random_domain(DOMAIN):
     return random.choice(DOMAIN)
 
@@ -68,6 +69,14 @@ def get_random_triptype():
     # shuffle the list
     random.shuffle(TRIPTYPE)
     return TRIPTYPE
+
+def get_random_flightday():
+    random.shuffle(FLIGHT_DAY)
+    return FLIGHT_DAY
+
+def get_random_insurance():
+    random.shuffle(BUY_INSURANCE)
+    return BUY_INSURANCE
 
 def count_passenger_adult():
     # if (RANGE_MAX <= ROW_COUNT):
@@ -148,6 +157,8 @@ def main():
     print("Max range:", MAX_RANGE)
     lst_triptype = get_random_triptype()
     print("Trip type: ",lst_triptype)
+    insurance = get_random_insurance()
+    flightday = get_random_flightday()
     # add all lists into a dataframe
     # Note: using from_dict(), orient='index').T arranges columns with unequal length together
     df = pd.DataFrame.from_dict({"custmr_email": email_lst,
@@ -158,6 +169,8 @@ def main():
                        "guest_adult": lst_adult,
                        "guest_child": lst_child,
                        "trip_type":lst_triptype,
+                       "flight_day": flightday,
+                       "insurance": insurance
                        }, orient='index').T
     # df.explode('orig').reset_index(drop=True)
     # df.explode('dest').reset_index(drop=True)
@@ -175,6 +188,15 @@ def main():
     df_expanded = df_expanded.sample(frac=1).reset_index(drop=True)
     print("Expanded dataframe shape: ", df_expanded.shape)
     print(df_expanded)
+    
+    # if both origin and destination cols are blank then drop the row
+    # nake a copy
+    df_clean = df_expanded
+    # df_new = df_new[(df_new.orig!="") & (df_new.dest!="")]
+    df_clean = df_clean[df_clean.orig.notnull()]
+    df_clean = df_clean[df_clean.dest.notnull()]
+    
+    print("Revised dataframe shape: ", df_clean.shape)
     # write generated data to disc
     df_expanded.to_csv("../data/booking_data.csv", sep=',', index=False)
         
