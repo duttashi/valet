@@ -161,7 +161,7 @@ def main():
     flightday = get_random_flightday()
     # add all lists into a dataframe
     # Note: using from_dict(), orient='index').T arranges columns with unequal length together
-    df = pd.DataFrame.from_dict({"custmr_email": email_lst,
+    df = pd.DataFrame.from_dict({"email": email_lst,
                        "booking_date": booking_dt,
                        "travel_date": travel_dt,
                        "orig": lst_airprt_orig,
@@ -197,6 +197,9 @@ def main():
     df_clean = df_clean[df_clean.dest.notnull()]
     
     print("Revised dataframe shape: ", df_clean.shape)
+    
+    # data summary
+    print(df_clean.groupby(['email','trip_type']).size())
     # write generated data to disc
     df_expanded.to_csv("../data/booking_data.csv", sep=',', index=False)
         
