@@ -12,7 +12,8 @@ Note:
 """
 
 # declare Global variables and import required libraries
-import random, string, re, os
+import random
+import string
 import numpy as np
 import pandas as pd
 from datetime import timedelta, date
@@ -22,11 +23,11 @@ DOMAIN = ["hotmail.com", "gmail.com", "aol.com",
           "mail.com", "mail.kz", "yahoo.com"]
 DEST = ["KUL", "IND", "AUS", "CHN", "USA", "UK"]
 ORIG = ["KUL", "IND", "AUS", "CHN", "USA", "UK"]
-TRIPTYPE = ["OneWay","RoundTrip","CircleTrip"]
-FLIGHT_DAY = ['Mon','Tue','Wed','Thur','Fri','Sat','Sun']
-BUY_INSURANCE = ['yes','no']
+TRIPTYPE = ["OneWay", "RoundTrip", "CircleTrip"]
+FLIGHT_DAY = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
+BUY_INSURANCE = ['yes', 'no']
 LETTER = string.ascii_lowercase[:12]
-ROW_COUNT = 300
+ROW_COUNT = 10
 MIN_RANGE = 0
 MAX_RANGE = 9
 
@@ -95,7 +96,7 @@ def main():
     start_dt = date(2015, 12, 1)
     end_dt = date(2015, 12, 10)
     travel_date = date(2015, 12, 19)
-    email_lst = generate_random_emails(ROW_COUNT,MAX_RANGE)
+    email_lst = generate_random_emails(ROW_COUNT, MAX_RANGE)
     airprt_orig = get_airport_orig()
     airprt_dest = get_airport_dest()
     trip = get_random_triptype()
@@ -106,22 +107,21 @@ def main():
     insurance = get_random_insurance()
     flightday = get_random_flightday()
     df = pd.DataFrame.from_dict({"email": email_lst,
-                       "booking_date": booking_dt,
-                       "travel_date": travel_dt,
-                       "orig": airprt_orig,
-                       "dest": airprt_dest,
-                       "guest_adult": count_adult,
-                       "guest_child": count_child,
-                       "trip_type":trip,
-                       "flight_day": flightday,
-                       "insurance": insurance
-                       }, orient='index').T
+                                 "booking_date": booking_dt,
+                                 "travel_date": travel_dt,
+                                 "orig": airprt_orig,
+                                 "dest": airprt_dest,
+                                 "guest_adult": count_adult,
+                                 "guest_child": count_child,
+                                 "trip_type": trip,
+                                 "flight_day": flightday,
+                                 "insurance": insurance
+                                 }, orient='index').T
     # repeat the rows in dataframe n times
-    df_expanded = df.loc[np.repeat(df.index.values,ROW_COUNT)]
+    df_expanded = df.loc[np.repeat(df.index.values, ROW_COUNT)]
     df_expanded = df_expanded.sample(frac=1).reset_index(drop=True)
     print("### Data Generated ###\n")
     print("Expanded dataframe shape: ", df_expanded.shape)
-    
     # if both origin and destination cols are blank then drop the row
     # nake a copy
     df_clean = df_expanded
