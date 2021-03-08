@@ -10,6 +10,7 @@ import random, string, re, os
 import numpy as np
 import pandas as pd
 from datetime import timedelta, date
+from sklearn.impute import SimpleImputer
 
 # declare some global variables
 DOMAIN = [ "hotmail.com", "gmail.com", "aol.com", 
@@ -189,9 +190,27 @@ def main():
     print("Expanded dataframe shape: ", df_expanded.shape)
     print(df_expanded)
     
+    # Missing values
+    print("Columns with Missing values")
+    print(df_expanded.columns[df_expanded.isnull().any()])
+    print("Count of missing values per column")
+    print(df_expanded.isnull().sum()) # note: both isna(), isnull() will work
+    
+    # impute the missing values
+    ## mark missing values as nan
+    df_expanded = df_expanded.replace({'orig':'KUL','dest':'IND'})
+    
+    ## impute missing values
+    df_imputed = df_expanded.fillna(df_expanded.mode())
+    print("Imputed data")
+    print(df_imputed.isnull().sum()) 
+    # df_expanded[[4,5,8,9,10]] = df_expanded[[4,5,8,9,10]].replace("",np.nan)
+    # define the imputer
+    # imputer = SimpleImputer(missing_values=np.nan, strategy='most_frequent')
+    # df_expanded_imputed = df_expanded[[4,5,8,9,10]]
     # if both origin and destination cols are blank then drop the row
     # nake a copy
-    df_clean = df_expanded
+    df_clean = df_imputed
     # df_new = df_new[(df_new.orig!="") & (df_new.dest!="")]
     df_clean = df_clean[df_clean.orig.notnull()]
     df_clean = df_clean[df_clean.dest.notnull()]
