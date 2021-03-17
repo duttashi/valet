@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Feb 21 09:17:09 2021
-Last modified on Feb 27 2021 at 21:00
-Objective: To generate travel booking data
-Version: 0.0.2
+Last modified on Mar 17 10:45:00 2021
+Objective: To generate synthetic travel booking data
+Version: 0.0.3
 
 Note:
-1. Change the value for ROW_COUNT variable to generate n number of rows
-2. This script is the working version of script `expr_generate_random_travel_booking_data` 
+1. Change the value for ROW_COUNT variable to generate n number of rows.
+2. This script is the working version of script `expr_generate_random_travel_booking_data`.
+3. The number of adult and children data is generated based on normal distribution.
 @author: Ashish
 """
 
@@ -17,6 +18,7 @@ import string
 import numpy as np
 import pandas as pd
 from datetime import timedelta, date
+import matplotlib.pyplot as plt
 
 # declare some global variables
 DOMAIN = ["hotmail.com", "gmail.com", "aol.com",
@@ -76,9 +78,17 @@ def get_random_triptype():
     return TRIPTYPE
     
 def count_passenger_adult():
+    # return normal distributed data
+    # return [np.random.normal(MIN_RANGE, MAX_RANGE) for _ in range(ROW_COUNT)]
+    
+    # To return random data, use random.randint() as given below 
     return [random.randint(MIN_RANGE, MAX_RANGE) for _ in range(ROW_COUNT)]
 
 def count_passenger_infant():
+    # return normal distributed data
+    # return [np.random.normal(MIN_RANGE, MAX_RANGE) for _ in range(ROW_COUNT)]
+    
+    # To return random data, use random.randint() as given below 
     return [random.randint(MIN_RANGE, MAX_RANGE) for _ in range(ROW_COUNT)]
 
 def get_random_flightday():
@@ -122,17 +132,26 @@ def main():
     df_expanded = df_expanded.sample(frac=1).reset_index(drop=True)
     print("### Data Generated ###\n")
     print("Expanded dataframe shape: ", df_expanded.shape)
-    # if both origin and destination cols are blank then drop the row
-    # nake a copy
+    # make a copy
     df_clean = df_expanded
-    # df_new = df_new[(df_new.orig!="") & (df_new.dest!="")]
+    # if both origin and destination cols are blank then drop the row
     df_clean = df_clean[df_clean.orig.notnull()]
     df_clean = df_clean[df_clean.dest.notnull()]
-    df_clean = df_clean[df_clean.trip_type.notnull()]
+    # df_clean = df_clean[df_clean.trip_type.notnull()]
+    # drop rows with duplicate values
+    # df_clean = df_clean.drop_duplicates(subset=['orig','dest'], keep='first')
     
     print("Revised dataframe shape: ", df_clean.shape)
     # write generated data to disc
-    df_clean.to_csv("../data/travel_booking_rev.csv", sep=',', index=False)
+    df_clean.to_csv("../data/synthetic_travel_booking_data.csv", sep=',', index=False)
+    
+    # plot
+    plt.style.use("ggplot")
+    fig, ax = plt.subplots()
+    ax.plot(df_clean["guest_adult"])
+    ax.plot(df["guest_adult"])
+    plt.show()
+    plt.clf()
     
 if __name__ == "__main__":
     main()
