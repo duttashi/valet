@@ -21,3 +21,10 @@ def custom_preprocessor(text):
     text = re.sub('\w*\d\w*', '', text)
     
     return text
+
+# Removing Multple spaces from within string
+
+def remove_multiple_spaces(string):
+    if type(string)==str:
+        return ' '.join(string.split())
+    return string
