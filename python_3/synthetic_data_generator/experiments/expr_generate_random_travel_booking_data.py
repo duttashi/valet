@@ -6,11 +6,11 @@ Objective: generate travel booking data
 @author: Ashish
 
 """
-import random, string, re, os
+import random, string
 import numpy as np
 import pandas as pd
 from datetime import timedelta, date
-from sklearn.impute import SimpleImputer
+
 
 # declare some global variables
 DOMAIN = [ "hotmail.com", "gmail.com", "aol.com", 
